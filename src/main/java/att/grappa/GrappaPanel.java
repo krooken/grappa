@@ -727,6 +727,10 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
         this.scaleChanged = this.scaleFactor != old;
         return (old);
     }
+    
+    public double getScaleFactor() {
+    	return this.scaleFactor;
+    }
 
     // //////////////////////////////////////////////////////////////////////
     //
