@@ -279,8 +279,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
         if (this.scaleToFit || this.scaleToSize != null) {
             this.scaleFactor = 1;
             this.zoomBox = null;
-            double scaleToWidth = 0;
-            double scaleToHeight = 0;
+            Dimension2D scaleTo;
             if (this.scaleToFit) {
                 tprnt = prnt = getParent();
                 while (tprnt != null && !(tprnt instanceof javax.swing.JViewport)) {
@@ -290,35 +289,31 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
                     prnt = tprnt;
                 }
                 if (prnt instanceof javax.swing.JViewport) {
-                    Dimension sz = ((javax.swing.JViewport) prnt).getSize();
-                    scaleToWidth = sz.width;
-                    scaleToHeight = sz.height;
+                    scaleTo = ((javax.swing.JViewport) prnt).getSize();
                 } else {
-                    Rectangle scaleTo = getVisibleRect();
-                    scaleToWidth = scaleTo.width;
-                    scaleToHeight = scaleTo.height;
+                    Rectangle scaleToRect = getVisibleRect();
+                    scaleTo = scaleToRect.getSize();
                 }
             } else {
-                scaleToWidth = this.scaleToSize.width;
-                scaleToHeight = this.scaleToSize.height;
+                scaleTo = this.scaleToSize;
             }
-            double widthRatio = scaleToWidth / bbox.getWidth();
-            double heightRatio = scaleToHeight / bbox.getHeight();
+            double widthRatio = scaleTo.getWidth() / bbox.getWidth();
+            double heightRatio = scaleTo.getHeight() / bbox.getHeight();
             double xTranslate = 0;
             double yTranslate = 0;
             if (widthRatio < heightRatio) {
-                xTranslate = (scaleToWidth - widthRatio * bbox.getWidth()) / (2.0 * widthRatio);
-                yTranslate = (scaleToHeight - widthRatio * bbox.getHeight()) / (2.0 * widthRatio);
+                xTranslate = (scaleTo.getWidth() - widthRatio * bbox.getWidth()) / (2.0 * widthRatio);
+                yTranslate = (scaleTo.getHeight() - widthRatio * bbox.getHeight()) / (2.0 * widthRatio);
                 this.transform.scale(widthRatio, widthRatio);
                 this.scaleInfo = widthRatio;
             } else {
-                xTranslate = (scaleToWidth - heightRatio * bbox.getWidth()) / (2.0 * heightRatio);
-                yTranslate = (scaleToHeight - heightRatio * bbox.getHeight()) / (2.0 * heightRatio);
+                xTranslate = (scaleTo.getWidth() - heightRatio * bbox.getWidth()) / (2.0 * heightRatio);
+                yTranslate = (scaleTo.getHeight() - heightRatio * bbox.getHeight()) / (2.0 * heightRatio);
                 this.transform.scale(heightRatio, heightRatio);
                 this.scaleInfo = heightRatio;
             }
             this.transform.translate(xTranslate, yTranslate);
-            nsz = new Dimension((int) Math.ceil(scaleToWidth), (int) Math.ceil(scaleToHeight));
+            nsz = new Dimension((int) Math.ceil(scaleTo.getWidth()), (int) Math.ceil(scaleTo.getHeight()));
             if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
                 || this.prevsz.getHeight() != nsz.getHeight()) {
                 setSize(nsz);
@@ -329,7 +324,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             this.scaleFactor = this.scaleInfo;
         } else if (this.zoomBox != null) {
             // System.err.println("zoombox");
-            Rectangle r;
+            Dimension2D scaleTo;
             tprnt = prnt = getParent();
             while (tprnt != null && !(tprnt instanceof javax.swing.JViewport)) {
                 tprnt = tprnt.getParent();
@@ -338,20 +333,18 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
                 prnt = tprnt;
             }
             if (prnt instanceof javax.swing.JViewport) {
-                Dimension sz = ((javax.swing.JViewport) prnt).getSize();
-                r = new Rectangle(0, 0, sz.width, sz.height);
+                scaleTo = ((javax.swing.JViewport) prnt).getSize();
             } else {
-                r = getVisibleRect();
+                Rectangle r = getVisibleRect();
+                scaleTo = r.getSize();
             }
             this.scaleFactor = 1;
             if (this.zoomBox.width != 0 && this.zoomBox.height != 0 && this.oldTransform != null) {
-                double scaleToWidth = r.width;
-                double scaleToHeight = r.height;
                 // System.err.println("zb=("+zb.x+","+zb.y+","+zb.width+","+zb.height+")");
                 // System.err.println("zB=("+zoomBox.x+","+zoomBox.y+","+zoomBox.width+","+zoomBox.height+")");
                 // System.err.println("vr=("+r.x+","+r.y+","+r.width+","+r.height+")");
-                double widthRatio = scaleToWidth / this.zoomBox.width;
-                double heightRatio = scaleToHeight / this.zoomBox.height;
+                double widthRatio = scaleTo.getWidth() / this.zoomBox.width;
+                double heightRatio = scaleTo.getHeight() / this.zoomBox.height;
                 if (widthRatio < heightRatio) {
                     this.scaleFactor = widthRatio;
                 } else {
@@ -360,8 +353,8 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
                 this.transform.scale(this.scaleFactor, this.scaleFactor);
                 this.scaleInfo = this.scaleFactor;
                 // transform.translate(xTranslate, yTranslate);
-                scaleToWidth = bbox.getWidth() * this.scaleFactor;
-                scaleToHeight = bbox.getHeight() * this.scaleFactor;
+                double scaleToWidth = bbox.getWidth() * this.scaleFactor;
+                double scaleToHeight = bbox.getHeight() * this.scaleFactor;
                 nsz = new Dimension((int) Math.ceil(scaleToWidth), (int) Math.ceil(scaleToHeight));
                 if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
                     || this.prevsz.getHeight() != nsz.getHeight()) {
