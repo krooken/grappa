@@ -347,7 +347,6 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             // setPreferredSize(new Dimension(w,h));
             this.scaleFactor = this.scaleInfo;
         } else if (this.scaleFactor != 1) {
-            Rectangle r = getVisibleRect();
 
             cpt = null;
             prnt = null;
@@ -361,6 +360,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
                     prnt = tprnt;
                 }
                 if (prnt instanceof javax.swing.JViewport && this.inverseTransform != null) {
+                    Rectangle r = getVisibleRect();
                     Point2D pt = new Point2D.Double(r.x, r.y);
                     cpt = new Point2D.Double(r.x + r.width, r.y + r.height);
                     this.inverseTransform.transform(pt, pt);
@@ -377,11 +377,12 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
 
             this.transform.scale(this.scaleFactor, this.scaleFactor);
             this.scaleInfo = this.scaleFactor;
-            int w = (int) Math.ceil(bbox.getWidth() * this.scaleFactor);
-            int h = (int) Math.ceil(bbox.getHeight() * this.scaleFactor);
-            w = w < r.width ? r.width : w;
-            h = h < r.height ? r.height : h;
-            nsz = new Dimension(w, h);
+            double scaleWidth = bbox.getWidth() * this.scaleFactor;
+            double scaleHeight = bbox.getHeight() * this.scaleFactor;
+            Dimension2D size = getVisibleRect().getSize();
+            double scaleToWidth = scaleWidth < size.getWidth() ? size.getWidth() : scaleWidth;
+            double scaleToHeight = scaleHeight < size.getHeight() ? size.getHeight() : scaleHeight;
+            nsz = new Dimension((int) Math.ceil(scaleToWidth), (int) Math.ceil(scaleToHeight));
             if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
                 || this.prevsz.getHeight() != nsz.getHeight()) {
                 setSize(nsz);
