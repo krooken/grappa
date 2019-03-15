@@ -254,19 +254,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
 
         this.elementVector = null;
 
-        GrappaBox bbox = new GrappaBox(this.subgraph.getBoundingBox());
-
-        GrappaSize margins = (GrappaSize) (this.subgraph.getAttributeValue(MARGIN_ATTR));
-
-        if (margins != null) {
-            double x_margin = PointsPerInch * margins.width;
-            double y_margin = PointsPerInch * margins.height;
-
-            bbox.x -= x_margin;
-            bbox.y -= y_margin;
-            bbox.width += 2.0 * x_margin;
-            bbox.height += 2.0 * y_margin;
-        }
+        GrappaBox bbox = getBoundingBox();
 
         this.subgLabels = this.subgraph.getShowSubgraphLabels();
         this.nodeLabels = this.subgraph.getShowNodeLabels();
@@ -565,6 +553,23 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
 
         return (cpt);
     }
+
+	private GrappaBox getBoundingBox() {
+		GrappaBox bbox = new GrappaBox(this.subgraph.getBoundingBox());
+
+        GrappaSize margins = (GrappaSize) (this.subgraph.getAttributeValue(MARGIN_ATTR));
+
+        if (margins != null) {
+            double x_margin = PointsPerInch * margins.width;
+            double y_margin = PointsPerInch * margins.height;
+
+            bbox.x -= x_margin;
+            bbox.y -= y_margin;
+            bbox.width += 2.0 * x_margin;
+            bbox.height += 2.0 * y_margin;
+        }
+		return bbox;
+	}
 
     /**
      * Centers the panel at the supplied point.
