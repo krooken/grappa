@@ -380,8 +380,8 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             double scaleWidth = bbox.getWidth() * this.scaleFactor;
             double scaleHeight = bbox.getHeight() * this.scaleFactor;
             Dimension2D size = getVisibleRect().getSize();
-            double scaleToWidth = scaleWidth < size.getWidth() ? size.getWidth() : scaleWidth;
-            double scaleToHeight = scaleHeight < size.getHeight() ? size.getHeight() : scaleHeight;
+            double scaleToWidth = Math.max(scaleWidth, size.getWidth());
+            double scaleToHeight = Math.max(scaleHeight, size.getHeight());
             nsz = new Dimension((int) Math.ceil(scaleToWidth), (int) Math.ceil(scaleToHeight));
             if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
                 || this.prevsz.getHeight() != nsz.getHeight()) {
