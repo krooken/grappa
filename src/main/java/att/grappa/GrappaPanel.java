@@ -448,18 +448,11 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
     }
 
 	private Point2D updateCenterPoint() {
-		Container prnt;
-		Container tprnt;
+		
 		Point2D cpt = null;
 
 		if (this.scaleChanged) {
-		    tprnt = prnt = getParent();
-		    while (tprnt != null && !(tprnt instanceof javax.swing.JViewport)) {
-		        tprnt = tprnt.getParent();
-		    }
-		    if (tprnt != null) {
-		        prnt = tprnt;
-		    }
+			Container prnt = getSizeDeterminingParent();
 		    if (prnt instanceof javax.swing.JViewport && this.inverseTransform != null) {
 		        Rectangle r = getVisibleRect();
 		        Point2D pt = new Point2D.Double(r.x, r.y);
@@ -488,16 +481,8 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
 	}
 
 	private Dimension2D getParentVisibleSize() {
-		Container prnt;
-		Container tprnt;
 		Dimension2D scaleTo;
-		tprnt = prnt = getParent();
-		while (tprnt != null && !(tprnt instanceof javax.swing.JViewport)) {
-		    tprnt = tprnt.getParent();
-		}
-		if (tprnt != null) {
-		    prnt = tprnt;
-		}
+		Container prnt = getSizeDeterminingParent();
 		if (prnt instanceof javax.swing.JViewport) {
 		    scaleTo = ((javax.swing.JViewport) prnt).getSize();
 		} else {
@@ -505,6 +490,19 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
 		    scaleTo = scaleToRect.getSize();
 		}
 		return scaleTo;
+	}
+
+	private Container getSizeDeterminingParent() {
+		Container prnt;
+		Container tprnt;
+		tprnt = prnt = getParent();
+		while (tprnt != null && !(tprnt instanceof javax.swing.JViewport)) {
+		    tprnt = tprnt.getParent();
+		}
+		if (tprnt != null) {
+		    prnt = tprnt;
+		}
+		return prnt;
 	}
 
 	private GrappaBox getBoundingBox() {
@@ -531,18 +529,10 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
      */
     public void centerPanelAtPoint(Point2D cpt)
     {
-        Container prnt, tprnt;
+        Container prnt = getSizeDeterminingParent();
         javax.swing.JViewport viewport;
 
         // System.err.println("cpt="+cpt);
-
-        tprnt = prnt = getParent();
-        while (tprnt != null && !(tprnt instanceof javax.swing.JViewport)) {
-            tprnt = tprnt.getParent();
-        }
-        if (tprnt != null) {
-            prnt = tprnt;
-        }
         if (prnt instanceof javax.swing.JViewport) {
             viewport = (javax.swing.JViewport) prnt;
             this.transform.transform(cpt, cpt);
