@@ -238,8 +238,6 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             return (null);
         }
         Graphics2D g2d = (Graphics2D) g;
-        Container prnt;
-        Container tprnt;
         Dimension nsz;
 
         Point2D cpt = null;
@@ -338,32 +336,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             this.scaleFactor = this.scaleInfo;
         } else if (this.scaleFactor != 1) {
 
-            cpt = null;
-            prnt = null;
-
-            if (this.scaleChanged) {
-                tprnt = prnt = getParent();
-                while (tprnt != null && !(tprnt instanceof javax.swing.JViewport)) {
-                    tprnt = tprnt.getParent();
-                }
-                if (tprnt != null) {
-                    prnt = tprnt;
-                }
-                if (prnt instanceof javax.swing.JViewport && this.inverseTransform != null) {
-                    Rectangle r = getVisibleRect();
-                    Point2D pt = new Point2D.Double(r.x, r.y);
-                    cpt = new Point2D.Double(r.x + r.width, r.y + r.height);
-                    this.inverseTransform.transform(pt, pt);
-                    this.inverseTransform.transform(cpt, cpt);
-                    cpt.setLocation(
-                        pt.getX() + (cpt.getX() - pt.getX()) / 2.,
-                        pt.getY() + (cpt.getY() - pt.getY()) / 2.
-                        );
-                } else {
-                    // to save checking again below
-                    prnt = null;
-                }
-            }
+            cpt = updateCenterPoint();
 
             this.transform.scale(this.scaleFactor, this.scaleFactor);
             this.scaleInfo = this.scaleFactor;
@@ -376,32 +349,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             setNewSize(nsz);
             this.transform.translate(-bbox.getMinX(), -bbox.getMinY());
         } else {
-            cpt = null;
-            prnt = null;
-
-            if (this.scaleChanged) {
-                tprnt = prnt = getParent();
-                while (tprnt != null && !(tprnt instanceof javax.swing.JViewport)) {
-                    tprnt = tprnt.getParent();
-                }
-                if (tprnt != null) {
-                    prnt = tprnt;
-                }
-                if (prnt instanceof javax.swing.JViewport && this.inverseTransform != null) {
-                    Rectangle r = getVisibleRect();
-                    Point2D pt = new Point2D.Double(r.x, r.y);
-                    cpt = new Point2D.Double(r.x + r.width, r.y + r.height);
-                    this.inverseTransform.transform(pt, pt);
-                    this.inverseTransform.transform(cpt, cpt);
-                    cpt.setLocation(
-                        pt.getX() + (cpt.getX() - pt.getX()) / 2.,
-                        pt.getY() + (cpt.getY() - pt.getY()) / 2.
-                        );
-                } else {
-                    // to save checking again below
-                    prnt = null;
-                }
-            }
+            cpt = updateCenterPoint();
             this.scaleInfo = 1;
             nsz = new Dimension((int) Math.ceil(bbox.getWidth()), (int) Math.ceil(bbox.getHeight()));
             setNewSize(nsz);
@@ -498,6 +446,37 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
 
         return (cpt);
     }
+
+	private Point2D updateCenterPoint() {
+		Container prnt;
+		Container tprnt;
+		Point2D cpt = null;
+
+		if (this.scaleChanged) {
+		    tprnt = prnt = getParent();
+		    while (tprnt != null && !(tprnt instanceof javax.swing.JViewport)) {
+		        tprnt = tprnt.getParent();
+		    }
+		    if (tprnt != null) {
+		        prnt = tprnt;
+		    }
+		    if (prnt instanceof javax.swing.JViewport && this.inverseTransform != null) {
+		        Rectangle r = getVisibleRect();
+		        Point2D pt = new Point2D.Double(r.x, r.y);
+		        cpt = new Point2D.Double(r.x + r.width, r.y + r.height);
+		        this.inverseTransform.transform(pt, pt);
+		        this.inverseTransform.transform(cpt, cpt);
+		        cpt.setLocation(
+		            pt.getX() + (cpt.getX() - pt.getX()) / 2.,
+		            pt.getY() + (cpt.getY() - pt.getY()) / 2.
+		            );
+		    } else {
+		        // to save checking again below
+		        prnt = null;
+		    }
+		}
+		return cpt;
+	}
 
 	private void setNewSize(Dimension nsz) {
 		if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
