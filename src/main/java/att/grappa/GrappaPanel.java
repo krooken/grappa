@@ -297,12 +297,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             this.transform.scale(this.scaleInfo, this.scaleInfo);
             this.transform.translate(xTranslate, yTranslate);
             nsz = new Dimension((int) Math.ceil(scaleTo.getWidth()), (int) Math.ceil(scaleTo.getHeight()));
-            if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
-                || this.prevsz.getHeight() != nsz.getHeight()) {
-                setSize(nsz);
-                setPreferredSize(nsz);
-                this.prevsz = new Dimension(nsz.width, nsz.height);
-            }
+            setNewSize(nsz);
             this.transform.translate(-bbox.getMinX(), -bbox.getMinY());
             this.scaleFactor = this.scaleInfo;
         } else if (this.zoomBox != null) {
@@ -327,12 +322,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
                 double scaleToWidth = bbox.getWidth() * this.scaleFactor;
                 double scaleToHeight = bbox.getHeight() * this.scaleFactor;
                 nsz = new Dimension((int) Math.ceil(scaleToWidth), (int) Math.ceil(scaleToHeight));
-                if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
-                    || this.prevsz.getHeight() != nsz.getHeight()) {
-                    setSize(nsz);
-                    setPreferredSize(nsz);
-                    this.prevsz = new Dimension(nsz.width, nsz.height);
-                }
+                setNewSize(nsz);
                 this.transform.translate(-bbox.getMinX(), -bbox.getMinY());
                 cpt = new Point2D.Double(this.zoomBox.getCenterX(), this.zoomBox.getCenterY());
             }
@@ -383,12 +373,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             double scaleToWidth = Math.max(scaleWidth, size.getWidth());
             double scaleToHeight = Math.max(scaleHeight, size.getHeight());
             nsz = new Dimension((int) Math.ceil(scaleToWidth), (int) Math.ceil(scaleToHeight));
-            if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
-                || this.prevsz.getHeight() != nsz.getHeight()) {
-                setSize(nsz);
-                setPreferredSize(nsz);
-                this.prevsz = new Dimension(nsz.width, nsz.height);
-            }
+            setNewSize(nsz);
             this.transform.translate(-bbox.getMinX(), -bbox.getMinY());
         } else {
             cpt = null;
@@ -419,12 +404,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             }
             this.scaleInfo = 1;
             nsz = new Dimension((int) Math.ceil(bbox.getWidth()), (int) Math.ceil(bbox.getHeight()));
-            if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
-                || this.prevsz.getHeight() != nsz.getHeight()) {
-                setSize(nsz);
-                setPreferredSize(nsz);
-                this.prevsz = new Dimension(nsz.width, nsz.height);
-            }
+            setNewSize(nsz);
             this.transform.translate(-bbox.getMinX(), -bbox.getMinY());
 
         }
@@ -518,6 +498,15 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
 
         return (cpt);
     }
+
+	private void setNewSize(Dimension nsz) {
+		if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
+		    || this.prevsz.getHeight() != nsz.getHeight()) {
+		    setSize(nsz);
+		    setPreferredSize(nsz);
+		    this.prevsz = new Dimension(nsz.width, nsz.height);
+		}
+	}
 
 	private Dimension2D getParentVisibleSize() {
 		Container prnt;
