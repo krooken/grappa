@@ -287,19 +287,14 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             }
             double widthRatio = scaleTo.getWidth() / bbox.getWidth();
             double heightRatio = scaleTo.getHeight() / bbox.getHeight();
-            double xTranslate = 0;
-            double yTranslate = 0;
             if (widthRatio < heightRatio) {
-                xTranslate = (scaleTo.getWidth() - widthRatio * bbox.getWidth()) / (2.0 * widthRatio);
-                yTranslate = (scaleTo.getHeight() - widthRatio * bbox.getHeight()) / (2.0 * widthRatio);
-                this.transform.scale(widthRatio, widthRatio);
                 this.scaleInfo = widthRatio;
             } else {
-                xTranslate = (scaleTo.getWidth() - heightRatio * bbox.getWidth()) / (2.0 * heightRatio);
-                yTranslate = (scaleTo.getHeight() - heightRatio * bbox.getHeight()) / (2.0 * heightRatio);
-                this.transform.scale(heightRatio, heightRatio);
                 this.scaleInfo = heightRatio;
             }
+            double xTranslate = (scaleTo.getWidth() - this.scaleInfo * bbox.getWidth()) / (2.0 * this.scaleInfo);
+            double yTranslate = (scaleTo.getHeight() - this.scaleInfo * bbox.getHeight()) / (2.0 * this.scaleInfo);
+            this.transform.scale(this.scaleInfo, this.scaleInfo);
             this.transform.translate(xTranslate, yTranslate);
             nsz = new Dimension((int) Math.ceil(scaleTo.getWidth()), (int) Math.ceil(scaleTo.getHeight()));
             if (this.prevsz == null || this.prevsz.getWidth() != nsz.getWidth()
