@@ -283,13 +283,7 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             } else {
                 scaleTo = this.scaleToSize;
             }
-            double widthRatio = scaleTo.getWidth() / bbox.getWidth();
-            double heightRatio = scaleTo.getHeight() / bbox.getHeight();
-            if (widthRatio < heightRatio) {
-                this.scaleInfo = widthRatio;
-            } else {
-                this.scaleInfo = heightRatio;
-            }
+            this.scaleInfo = getScaleFactorToFit(scaleTo);
             double xTranslate = (scaleTo.getWidth() - this.scaleInfo * bbox.getWidth()) / (2.0 * this.scaleInfo);
             double yTranslate = (scaleTo.getHeight() - this.scaleInfo * bbox.getHeight()) / (2.0 * this.scaleInfo);
             this.transform.scale(this.scaleInfo, this.scaleInfo);
@@ -300,20 +294,12 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
             this.scaleFactor = this.scaleInfo;
         } else if (this.zoomBox != null) {
             // System.err.println("zoombox");
-            Dimension2D scaleTo;
-            scaleTo = getParentVisibleSize();
             this.scaleFactor = 1;
             if (this.zoomBox.width != 0 && this.zoomBox.height != 0 && this.oldTransform != null) {
                 // System.err.println("zb=("+zb.x+","+zb.y+","+zb.width+","+zb.height+")");
                 // System.err.println("zB=("+zoomBox.x+","+zoomBox.y+","+zoomBox.width+","+zoomBox.height+")");
                 // System.err.println("vr=("+r.x+","+r.y+","+r.width+","+r.height+")");
-                double widthRatio = scaleTo.getWidth() / this.zoomBox.width;
-                double heightRatio = scaleTo.getHeight() / this.zoomBox.height;
-                if (widthRatio < heightRatio) {
-                    this.scaleFactor = widthRatio;
-                } else {
-                    this.scaleFactor = heightRatio;
-                }
+                this.scaleFactor = getScaleFactorToFit(zoomBox);
                 this.transform.scale(this.scaleFactor, this.scaleFactor);
                 this.scaleInfo = this.scaleFactor;
                 // transform.translate(xTranslate, yTranslate);
@@ -445,6 +431,37 @@ public class GrappaPanel extends javax.swing.JPanel implements att.grappa.Grappa
         this.subgraph.release();
 
         return (cpt);
+    }
+    
+    public double getScaleFactorToFit() {
+
+        Dimension2D scaleTo = getParentVisibleSize();
+        return getScaleFactorToFit(scaleTo);
+    }
+    
+    public double getScaleFactorToFit(Dimension2D scaleTo) {
+
+    	GrappaBox bbox = getBoundingBox();
+    	return getScaleFactorToFit(scaleTo, bbox);
+    }
+    
+    public double getScaleFactorToFit(GrappaBox boundingBox) {
+    	
+    	Dimension2D scaleTo = getParentVisibleSize();
+    	return getScaleFactorToFit(scaleTo, boundingBox);
+    }
+    
+    public double getScaleFactorToFit(Dimension2D scaleTo, GrappaBox boundingBox) {
+
+        double scaleFactor = 1.0;
+        double widthRatio = scaleTo.getWidth() / boundingBox.getWidth();
+        double heightRatio = scaleTo.getHeight() / boundingBox.getHeight();
+        if (widthRatio < heightRatio) {
+            scaleFactor = widthRatio;
+        } else {
+            scaleFactor = heightRatio;
+        }
+        return scaleFactor;
     }
 
 	private Point2D updateCenterPoint() {
